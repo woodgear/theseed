@@ -3,21 +3,35 @@ extends Label
 
 onready var player = $"../Player"
 onready var voxel_world = $"../VoxelWorld"
-
+var focusd = "false"
+func _ready():
+	pass
 
 func _process(_delta):
 	if Input.is_action_just_pressed("debug"):
 		visible = not visible
 
-	text = "Position: " + _vector_to_string_appropriate_digits(player.transform.origin)
+	text = "pos: " + _vector_to_string_appropriate_digits(player.transform.origin)
 	text += "\nEffective render distance: " + str(voxel_world.effective_render_distance)
 	text += "\nLooking: " + _cardinal_string_from_radians(player.transform.basis.get_euler().y)
 	text += "\nMemory: " + "%3.0f" % (OS.get_static_memory_usage() / 1048576.0) + " MiB"
 	text += "\nFPS: " + str(Engine.get_frames_per_second())
+	text += "\nfocus: " + str(self.focusd)
+	
 
+func _notification(what) -> void:
+	if what == MainLoop.NOTIFICATION_WM_FOCUS_IN:
+		self.focusd="true"
+	elif what == MainLoop.NOTIFICATION_WM_FOCUS_OUT:
+		self.focusd="false"
+	pass
+		
+func _vector_to_string_appropriate_digits(vector):
+	var ret = "x:{x},y:{y},z:{z}".format( {"x":vector.x,"y":vector.y,"z":vector.z})
+	return ret
 
 # Avoids the problem of showing more digits than needed or available.
-func _vector_to_string_appropriate_digits(vector):
+func _vector_to_string_appropriate_digits_old(vector):
 	var factors = [1000, 1000, 1000]
 	for i in range(3):
 		if abs(vector[i]) > 4096:
@@ -31,6 +45,7 @@ func _vector_to_string_appropriate_digits(vector):
 			str(round(vector.x * factors[0]) / factors[0]) + ", " + \
 			str(round(vector.y * factors[1]) / factors[1]) + ", " + \
 			str(round(vector.z * factors[2]) / factors[2]) + ")"
+
 
 
 # Expects a rotation where 0 is North, on the range -PI to PI.

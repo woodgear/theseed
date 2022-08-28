@@ -14,7 +14,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://world/chunk.gd"
 }, {
-"base": "",
+"base": "EditorVCSInterface",
 "class": "GitAPI",
 "language": "NativeScript",
 "path": "res://addons/godot-git-plugin/git_api.gdns"
@@ -32,13 +32,13 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Voxel Game"
+config/name="theseed"
 config/description="This demo is a minimal voxel game, inspired by others such as Minecraft.
 
 Sticking to GDScript and the built-in Godot tools, as this demo does, is
 quite limiting. If you are making your own voxel game, you should probably
 use Zylann's voxel module instead: https://github.com/Zylann/godot_voxel"
-run/main_scene="res://menu/main/main_menu.tscn"
+run/main_scene="res://world/world.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -57,6 +57,10 @@ window/stretch/aspect="expand"
 
 version_control_autoload_on_startup=true
 version_control_plugin_name="GitAPI"
+
+[gui]
+
+theme/use_hidpi=true
 
 [input]
 
@@ -168,11 +172,13 @@ pick_block={
 [physics]
 
 common/physics_fps=120
+2d/physics_engine="GodotPhysics"
 3d/physics_engine="Bullet"
+2d/thread_model=2
 
 [rendering]
 
-quality/driver/driver_name="GLES2"
+threads/thread_model=2
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
 quality/filters/anisotropic_filter_level=16

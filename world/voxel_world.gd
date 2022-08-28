@@ -16,6 +16,10 @@ var _chunks = {}
 
 onready var player = $"../Player"
 
+func _ready():
+	print("chunk ",CHUNK_MIDPOINT)
+	OS.set_current_screen(1)
+	pass
 
 func _process(_delta):
 	_set_render_distance(Settings.render_distance)

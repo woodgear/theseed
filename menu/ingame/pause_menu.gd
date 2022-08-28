@@ -10,6 +10,7 @@ onready var voxel_world = $"../VoxelWorld"
 
 func _process(_delta):
 	if Input.is_action_just_pressed("pause"):
+		print("pause")
 		pause.visible = crosshair.visible
 		crosshair.visible = not crosshair.visible
 		options.visible = false
