@@ -4,11 +4,11 @@
 [ext_resource path="res://world/textures/texture_sheet.png" type="Texture" id=2]
 
 [sub_resource type="CylinderShape" id=1]
-radius = 0.4
 height = 1.8
+radius = 0.4
 
 [sub_resource type="AtlasTexture" id=2]
-flags = 11
+flags = 27
 atlas = ExtResource( 2 )
 region = Rect2( 0, 0, 64, 64 )
 
@@ -44,6 +44,3 @@ margin_bottom = -64.0
 rect_min_size = Vector2( 64, 64 )
 rect_scale = Vector2( 2, 2 )
 texture = SubResource( 2 )
-__meta__ = {
-"_edit_use_anchors_": false
-}

@@ -4,7 +4,7 @@ extends StaticBody
 # After that, chunks finish setting themselves up in the _ready() function.
 # If a chunk is changed, its "regenerate" method is called.
 
-const CHUNK_SIZE = 16 # Keep in sync with TerrainGenerator.
+const CHUNK_SIZE = 8 # Keep in sync with TerrainGenerator.
 const TEXTURE_SHEET_WIDTH = 8
 
 const CHUNK_LAST_INDEX = CHUNK_SIZE - 1
@@ -21,10 +21,12 @@ onready var voxel_world = get_parent()
 func _ready():
 	transform.origin = chunk_position * CHUNK_SIZE
 	name = str(chunk_position)
-	if Settings.world_type == 0:
-		data = TerrainGenerator.random_blocks()
-	else:
-		data = TerrainGenerator.flat(chunk_position)
+	data = TerrainGenerator.flat(chunk_position)
+
+#	if Settings.world_type == 0:
+#		data = TerrainGenerator.random_blocks()
+#	else:
+#		data = TerrainGenerator.flat(chunk_position)
 
 	# We can only add colliders in the main thread due to physics limitations.
 	_generate_chunk_collider()

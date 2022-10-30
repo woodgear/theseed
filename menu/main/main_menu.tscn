@@ -31,14 +31,14 @@ __meta__ = {
 }
 
 [node name="Logo" type="CenterContainer" parent="TitleScreen"]
-margin_right = 1600.0
+margin_right = 1440.0
 margin_bottom = 300.0
 rect_min_size = Vector2( 0, 300 )
 
 [node name="Logo" type="TextureRect" parent="TitleScreen/Logo"]
-margin_left = 432.0
+margin_left = 352.0
 margin_top = 110.0
-margin_right = 1168.0
+margin_right = 1088.0
 margin_bottom = 190.0
 texture = ExtResource( 1 )
 
@@ -69,23 +69,22 @@ __meta__ = {
 }
 
 [node name="ButtonHolder" type="HBoxContainer" parent="TitleScreen"]
-margin_top = 304.0
-margin_right = 1600.0
-margin_bottom = 680.0
+margin_top = 308.0
+margin_right = 1440.0
+margin_bottom = 540.0
 size_flags_vertical = 3
 alignment = 1
 
 [node name="MainButtons" type="VBoxContainer" parent="TitleScreen/ButtonHolder"]
-margin_left = 608.0
-margin_right = 992.0
-margin_bottom = 376.0
+margin_left = 528.0
+margin_right = 912.0
+margin_bottom = 232.0
 custom_constants/separation = 20
 alignment = 1
 
 [node name="Start" type="TextureButton" parent="TitleScreen/ButtonHolder/MainButtons"]
-margin_top = 72.0
 margin_right = 384.0
-margin_bottom = 136.0
+margin_bottom = 64.0
 rect_min_size = Vector2( 384, 64 )
 texture_normal = ExtResource( 7 )
 
@@ -102,9 +101,9 @@ __meta__ = {
 }
 
 [node name="Options" type="TextureButton" parent="TitleScreen/ButtonHolder/MainButtons"]
-margin_top = 156.0
+margin_top = 84.0
 margin_right = 384.0
-margin_bottom = 220.0
+margin_bottom = 148.0
 rect_min_size = Vector2( 384, 64 )
 texture_normal = ExtResource( 7 )
 
@@ -121,9 +120,9 @@ __meta__ = {
 }
 
 [node name="Exit" type="TextureButton" parent="TitleScreen/ButtonHolder/MainButtons"]
-margin_top = 240.0
+margin_top = 168.0
 margin_right = 384.0
-margin_bottom = 304.0
+margin_bottom = 232.0
 rect_min_size = Vector2( 384, 64 )
 texture_normal = ExtResource( 7 )
 
@@ -140,9 +139,9 @@ __meta__ = {
 }
 
 [node name="Spacer" type="Control" parent="TitleScreen"]
-margin_top = 684.0
-margin_right = 1600.0
-margin_bottom = 900.0
+margin_top = 548.0
+margin_right = 1440.0
+margin_bottom = 764.0
 rect_min_size = Vector2( 0, 216 )
 
 [node name="StartGame" type="HBoxContainer" parent="."]

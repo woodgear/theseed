@@ -3,7 +3,9 @@ extends Label
 
 onready var player = $"../Player"
 onready var voxel_world = $"../VoxelWorld"
-var focusd = "false"
+var focusd = "true"
+var input = ""
+
 func _ready():
 	pass
 
@@ -12,41 +14,50 @@ func _process(_delta):
 		visible = not visible
 
 	text = "pos: " + _vector_to_string_appropriate_digits(player.transform.origin)
+	text += "\nchunk_pos: " + str(player.chunk_pos())
 	text += "\nEffective render distance: " + str(voxel_world.effective_render_distance)
 	text += "\nLooking: " + _cardinal_string_from_radians(player.transform.basis.get_euler().y)
 	text += "\nMemory: " + "%3.0f" % (OS.get_static_memory_usage() / 1048576.0) + " MiB"
 	text += "\nFPS: " + str(Engine.get_frames_per_second())
 	text += "\nfocus: " + str(self.focusd)
+	text += "\ninput: " + self.input
+	text += "\nplayer_mode: " + str(player.mode)
 	
+	
+func _input(event:InputEvent):
+	self.input=show_input(event)
+	pass
 
+func _physics_process(delta):
+	
+	pass
+
+func show_input(event:InputEvent)->String:
+	if !event.is_pressed():
+		return "mouse"
+	if event.is_action_type():
+		var action_list=[]
+		for action in InputMap.get_actions():
+			if InputMap.event_is_action(event, action):
+				action_list.append(action)
+		if !action_list.empty():
+			return "action "+ str(action_list.size())+str(action_list)
+		return "action/undefined: "+ event.as_text()
+	return event.as_text()
+	pass
+	
 func _notification(what) -> void:
 	if what == MainLoop.NOTIFICATION_WM_FOCUS_IN:
 		self.focusd="true"
+
 	elif what == MainLoop.NOTIFICATION_WM_FOCUS_OUT:
 		self.focusd="false"
+
 	pass
 		
 func _vector_to_string_appropriate_digits(vector):
 	var ret = "x:{x},y:{y},z:{z}".format( {"x":vector.x,"y":vector.y,"z":vector.z})
 	return ret
-
-# Avoids the problem of showing more digits than needed or available.
-func _vector_to_string_appropriate_digits_old(vector):
-	var factors = [1000, 1000, 1000]
-	for i in range(3):
-		if abs(vector[i]) > 4096:
-			factors[i] = factors[i] / 10
-			if abs(vector[i]) > 65536:
-				factors[i] = factors[i] / 10
-				if abs(vector[i]) > 524288:
-					factors[i] = factors[i] / 10
-
-	return "(" + \
-			str(round(vector.x * factors[0]) / factors[0]) + ", " + \
-			str(round(vector.y * factors[1]) / factors[1]) + ", " + \
-			str(round(vector.z * factors[2]) / factors[2]) + ")"
-
-
 
 # Expects a rotation where 0 is North, on the range -PI to PI.
 func _cardinal_string_from_radians(angle):

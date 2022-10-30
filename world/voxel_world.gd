@@ -16,11 +16,9 @@ var _chunks = {}
 
 onready var player = $"../Player"
 
-func _ready():
-	print("chunk ",CHUNK_MIDPOINT)
-	OS.set_current_screen(1)
-	pass
 
+
+	
 func _process(_delta):
 	_set_render_distance(Settings.render_distance)
 	var player_chunk = (player.transform.origin / Chunk.CHUNK_SIZE).round()
@@ -62,10 +60,12 @@ func _process(_delta):
 
 
 func get_block_global_position(block_global_position):
+	# 每个block是占据一定的物理里空间的
 	var chunk_position = (block_global_position / Chunk.CHUNK_SIZE).floor()
 	if _chunks.has(chunk_position):
 		var chunk = _chunks[chunk_position]
 		var sub_position = block_global_position.posmod(Chunk.CHUNK_SIZE)
+		print_debug("cp ",chunk_position," sp ",sub_position)
 		if chunk.data.has(sub_position):
 			return chunk.data[sub_position]
 	return 0
@@ -80,7 +80,7 @@ func set_block_global_position(block_global_position, block_id):
 	else:
 		chunk.data[sub_position] = block_id
 	chunk.regenerate()
-
+	return
 	# We also might need to regenerate some neighboring chunks.
 	if Chunk.is_block_transparent(block_id):
 		if sub_position.x == 0:
