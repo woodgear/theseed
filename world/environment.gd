@@ -3,8 +3,7 @@ extends WorldEnvironment
 
 onready var voxel_world = $"../VoxelWorld"
 
-
-func _process(delta):
+func with_fog(delta):
 	environment.fog_enabled = Settings.fog_enabled
 	environment.dof_blur_far_enabled = Settings.fog_enabled
 
@@ -15,3 +14,9 @@ func _process(delta):
 	environment.fog_depth_begin = move_toward(environment.fog_depth_begin, target_distance - Chunk.CHUNK_SIZE, rate)
 	environment.fog_depth_end = move_toward(environment.fog_depth_end, target_distance, rate)
 	environment.dof_blur_far_distance = environment.fog_depth_end
+	pass
+func _process(delta):
+	environment.fog_enabled = false
+	environment.dof_blur_far_enabled = false
+	pass
+

@@ -24,6 +24,7 @@ func get_mode() ->String:
 	
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	transform.origin.y=0
 
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -42,7 +43,7 @@ func _process(_delta):
 	self.transform.basis = Basis(Vector3(0,_mouse_motion.x * -0.001 , 0))
 	# 当我们上下转的时候，我们只要转变自己的头就行了
 	head.transform.basis = Basis(Vector3(_mouse_motion.y * -0.001,0 , 0))
-
+	
 	# Block selection.
 	var position = raycast.get_collision_point()
 	var normal = raycast.get_collision_normal()
@@ -105,7 +106,7 @@ func _physics_process_normal(delta):
 
 	#print("gravity is ",velocity.y)
 	# Gravity.
-	#velocity.y -= gravity * delta # 因为重力而下落
+	velocity.y -= gravity * delta # 因为重力而下落
 	# 总是在下坠，等碰撞检测把我们停住
 	velocity.y-=1    
 		
@@ -114,16 +115,43 @@ func _physics_process_normal(delta):
 	# 这是偏移值
 	velocity=self.move_and_slide(Vector3(movement.x, velocity.y, movement.z), Vector3.UP,true)
 
-	if (velocity.x + velocity.y+velocity.z):
-		print_debug("x  velocity",delta,velocity,velocity.x + velocity.y+velocity.z ==0)
-
+	#if (velocity.x + velocity.y+velocity.z):
+		#print_debug("x  velocity",delta,velocity,velocity.x + velocity.y+velocity.z ==0)
 	# Jumping, applied next frame.
 	if Input.is_action_pressed("jump"):
 		if velocity.y<0:
 			velocity.y=0
 		velocity.y += 2 # 只有大于1 才是向上 不然会被下坠的-1停在空中
 	pass
+	
+func _physics_process_watcher(delta):
+	# 当左右前后移动时我们需要根据当前的视角方向来进行调整
+	var move=Vector3(0,0,0)
+	var press_move=false
+	var step =30
+	if Input.is_action_pressed("move_left"):
+		self.move_and_slide(transform.basis.xform(Vector3(-1*step,0,0)),Vector3.UP)
+		pass
+	if Input.is_action_pressed("move_right"):
+		self.move_and_slide(transform.basis.xform(Vector3(1*step,0,0)),Vector3.UP)
+		pass
+	if Input.is_action_pressed("move_forward"):
+		self.move_and_slide(transform.basis.xform(Vector3(0,0,-1*step)),Vector3.UP)
+		pass
+	if Input.is_action_pressed("move_back"):
+		self.move_and_slide(transform.basis.xform(Vector3(0,0,1*step)),Vector3.UP)
+		pass
+	if Input.is_action_pressed("move_up"):
+		self.move_and_slide(Vector3(0,1*step,0),Vector3.UP)
+		pass
+	if Input.is_action_pressed("move_down"):
+		self.move_and_slide(Vector3(0,-1*step,0),Vector3.UP)
+		pass
+		
 
+#	self.move_and_slide(movement, Vector3.UP)
+	pass
+	
 func _physics_process_fly(delta):
 	# wasd 前后左右 space 上 shift+space 下
 	var movement_vec2 = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
@@ -140,13 +168,14 @@ func _physics_process_fly(delta):
 	pass
 
 func _physics_process(delta):
-	if mode == PlayerMode.FLY:
-		self._physics_process_fly(delta)
-		pass
-	if mode == PlayerMode.NORMAL:
-		self._physics_process_normal(delta)
-		pass
-	pass
+	self._physics_process_watcher(delta)
+#	if mode == PlayerMode.FLY:
+#		self._physics_process_fly(delta)
+#		pass
+#	if mode == PlayerMode.NORMAL:
+#		self._physics_process_normal(delta)
+#		pass
+#	pass
 
 
 func chunk_pos():

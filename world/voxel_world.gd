@@ -6,7 +6,7 @@ const CHUNK_END_SIZE = Chunk.CHUNK_SIZE - 1
 
 var render_distance setget _set_render_distance
 var _delete_distance = 0
-var effective_render_distance = 0
+var effective_render_distance = 10
 var _old_player_chunk = Vector3() # TODO: Vector3i
 
 var _generating = true
@@ -17,37 +17,36 @@ var _chunks = {}
 onready var player = $"../Player"
 
 
+func _ready():
+	var chunk = Chunk.new()
+	var chunk_position = Vector3(0, 0, 0)
+	_chunks[chunk_position] = chunk
+	self.add_child(chunk)
+
 
 	
 func _process(_delta):
 	_set_render_distance(Settings.render_distance)
-	var player_chunk = (player.transform.origin / Chunk.CHUNK_SIZE).round()
 
-	if _deleting or player_chunk != _old_player_chunk:
-		_delete_far_away_chunks(player_chunk)
-		_generating = true
-
+	#if _deleting or player_chunk != _old_player_chunk:
+	#	_delete_far_away_chunks(player_chunk)
+	#	_generating = true
+	
 	if not _generating:
 		return
-
-	# Try to generate chunks ahead of time based on where the player is moving.
-	player_chunk.y += round(clamp(player.velocity.y, -render_distance / 4, render_distance / 4))
-
+	var base = Vector3(0, 0, 0)
 	# Check existing chunks within range. If it doesn't exist, create it.
-	for x in range(player_chunk.x - effective_render_distance, player_chunk.x + effective_render_distance):
-		for y in range(player_chunk.y - effective_render_distance, player_chunk.y + effective_render_distance):
-			for z in range(player_chunk.z - effective_render_distance, player_chunk.z + effective_render_distance):
-				var chunk_position = Vector3(x, y, z)
-				if player_chunk.distance_to(chunk_position) > render_distance:
-					continue
-
+	for x in range(base.x - effective_render_distance, base.x + effective_render_distance):
+		for y in range(base.y - effective_render_distance, base.y + effective_render_distance):
+			for z in range(base.z - effective_render_distance, base.z + effective_render_distance):
+				var chunk_position = Vector3(x,y,x)
 				if _chunks.has(chunk_position):
 					continue
 
 				var chunk = Chunk.new()
 				chunk.chunk_position = chunk_position
 				_chunks[chunk_position] = chunk
-				add_child(chunk)
+				self.add_child(chunk)
 				return
 
 	# If we didn't generate any chunks (and therefore didn't return), what next?
@@ -65,7 +64,7 @@ func get_block_global_position(block_global_position):
 	if _chunks.has(chunk_position):
 		var chunk = _chunks[chunk_position]
 		var sub_position = block_global_position.posmod(Chunk.CHUNK_SIZE)
-		print_debug("cp ",chunk_position," sp ",sub_position)
+		#print_debug("cp ",chunk_position," sp ",sub_position)
 		if chunk.data.has(sub_position):
 			return chunk.data[sub_position]
 	return 0

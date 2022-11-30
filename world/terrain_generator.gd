@@ -24,11 +24,20 @@ static func random_blocks():
 static func flat(chunk_position):
 	var data = {}
 
-	if chunk_position.y != -10:
-		return data
+#	if chunk_position.y != -100:
+#		return data
 
 	for x in range(CHUNK_SIZE):
 		for z in range(CHUNK_SIZE):
+			#print("x ",x," z ",z)
+			if x==0:
+				data[Vector3(x, 3, z)] = 3
+				data[Vector3(x, 4, z)] = 3
+
+			if z==0:
+				data[Vector3(x, 3, z)] = 3
+				data[Vector3(x, 4, z)] = 3
+				
 			data[Vector3(x, 0, z)] = 3
 			data[Vector3(x, 1, z)] = 3
 			data[Vector3(x, 2, z)] = 3

@@ -11,7 +11,7 @@ const CHUNK_LAST_INDEX = CHUNK_SIZE - 1
 const TEXTURE_TILE_SIZE = 1.0 / TEXTURE_SHEET_WIDTH
 
 var data = {}
-var chunk_position = Vector3() # TODO: Vector3i
+var chunk_position = Vector3(0,0,0) # TODO: Vector3i
 
 var _thread
 
@@ -22,7 +22,7 @@ func _ready():
 	transform.origin = chunk_position * CHUNK_SIZE
 	name = str(chunk_position)
 	data = TerrainGenerator.flat(chunk_position)
-
+	#print_debug("ready ",name)
 #	if Settings.world_type == 0:
 #		data = TerrainGenerator.random_blocks()
 #	else:
