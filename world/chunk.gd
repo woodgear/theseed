@@ -30,9 +30,10 @@ func _ready():
 
 	# We can only add colliders in the main thread due to physics limitations.
 	_generate_chunk_collider()
+	_generate_chunk_mesh()
 	# However, we can use a thread for mesh generation.
-	_thread = Thread.new()
-	_thread.start(self, "_generate_chunk_mesh")
+#	_thread = Thread.new()
+#	_thread.start(self, "_generate_chunk_mesh")
 
 
 func regenerate():

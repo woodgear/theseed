@@ -4,9 +4,7 @@ extends Node
 const CHUNK_MIDPOINT = Vector3(0.5, 0.5, 0.5) * Chunk.CHUNK_SIZE
 const CHUNK_END_SIZE = Chunk.CHUNK_SIZE - 1
 
-var render_distance setget _set_render_distance
-var _delete_distance = 0
-var effective_render_distance = 10
+var effective_render_distance = 5
 var _old_player_chunk = Vector3() # TODO: Vector3i
 
 var _generating = true
@@ -26,7 +24,6 @@ func _ready():
 
 	
 func _process(_delta):
-	_set_render_distance(Settings.render_distance)
 
 	#if _deleting or player_chunk != _old_player_chunk:
 	#	_delete_far_away_chunks(player_chunk)
@@ -39,23 +36,14 @@ func _process(_delta):
 	for x in range(base.x - effective_render_distance, base.x + effective_render_distance):
 		for y in range(base.y - effective_render_distance, base.y + effective_render_distance):
 			for z in range(base.z - effective_render_distance, base.z + effective_render_distance):
-				var chunk_position = Vector3(x,y,x)
+				var chunk_position = Vector3(x,y,z)
 				if _chunks.has(chunk_position):
 					continue
-
 				var chunk = Chunk.new()
 				chunk.chunk_position = chunk_position
 				_chunks[chunk_position] = chunk
 				self.add_child(chunk)
 				return
-
-	# If we didn't generate any chunks (and therefore didn't return), what next?
-	if effective_render_distance < render_distance:
-		# We can move on to the next stage by increasing the effective distance.
-		effective_render_distance += 1
-	else:
-		# Effective render distance is maxed out, done generating.
-		_generating = false
 
 
 func get_block_global_position(block_global_position):
@@ -106,36 +94,3 @@ func clean_up():
 	for c in get_children():
 		c.free()
 
-
-func _delete_far_away_chunks(player_chunk):
-	_old_player_chunk = player_chunk
-	# If we need to delete chunks, give the new chunk system a chance to catch up.
-	effective_render_distance = max(1, effective_render_distance - 1)
-
-	var deleted_this_frame = 0
-	# We should delete old chunks more aggressively if moving fast.
-	# An easy way to calculate this is by using the effective render distance.
-	# The specific values in this formula are arbitrary and from experimentation.
-	var max_deletions = clamp(2 * (render_distance - effective_render_distance), 2, 8)
-	# Also take the opportunity to delete far away chunks.
-	for chunk_position_key in _chunks.keys():
-		if player_chunk.distance_to(chunk_position_key) > _delete_distance:
-			var thread = _chunks[chunk_position_key]._thread
-			if thread:
-				thread.wait_to_finish()
-			_chunks[chunk_position_key].queue_free()
-			_chunks.erase(chunk_position_key)
-			deleted_this_frame += 1
-			# Limit the amount of deletions per frame to avoid lag spikes.
-			if deleted_this_frame > max_deletions:
-				# Continue deleting next frame.
-				_deleting = true
-				return
-
-	# We're done deleting.
-	_deleting = false
-
-
-func _set_render_distance(value):
-	render_distance = value
-	_delete_distance = value + 2

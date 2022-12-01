@@ -14,7 +14,7 @@ onready var voxel_world = $"../VoxelWorld"
 onready var crosshair = $"../PauseMenu/Crosshair"
 enum PlayerMode {FLY,NORMAL}
 var mode = PlayerMode.NORMAL setget ,get_mode
-
+var super_mode = true
 func get_mode() ->String:
 	if mode==PlayerMode.FLY:
 		return "fly"
@@ -27,6 +27,7 @@ func _ready():
 	transform.origin.y=0
 
 func _input(event):
+	
 	if event is InputEventMouseMotion:
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 			# 为什么是+=?
@@ -93,35 +94,19 @@ func _physics_process_normal(delta):
 
 	# Keyboard movement.
 	var movement_vec2 = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-	if !(movement_vec2.x==0 && movement_vec2.y==0):
-		print_debug(movement_vec2)
 	
 	var movement = transform.basis.xform(Vector3(movement_vec2.x, 0, movement_vec2.y))
 	if !crouching:
 		movement *= 5
-		
-	if !(movement.x==0 && movement.y==0 && movement.z==0):
-		print_debug(movement,transform.basis)
 
-
-	#print("gravity is ",velocity.y)
-	# Gravity.
-	velocity.y -= gravity * delta # 因为重力而下落
-	# 总是在下坠，等碰撞检测把我们停住
-	velocity.y-=1    
-		
+	# Gravity. # 因为重力而下落
+	velocity.y -= gravity * delta 
 	#warning-ignore:return_value_discarded
-#ss	velocity = self.move_and_slide(Vector3(movement.x, velocity.y, movement.z), Vector3.UP)
-	# 这是偏移值
-	velocity=self.move_and_slide(Vector3(movement.x, velocity.y, movement.z), Vector3.UP,true)
+	velocity = move_and_slide(Vector3(movement.x, velocity.y, movement.z), Vector3.UP)
 
-	#if (velocity.x + velocity.y+velocity.z):
-		#print_debug("x  velocity",delta,velocity,velocity.x + velocity.y+velocity.z ==0)
 	# Jumping, applied next frame.
-	if Input.is_action_pressed("jump"):
-		if velocity.y<0:
-			velocity.y=0
-		velocity.y += 2 # 只有大于1 才是向上 不然会被下坠的-1停在空中
+	if is_on_floor() and Input.is_action_pressed("jump"):
+		velocity.y = 5
 	pass
 	
 func _physics_process_watcher(delta):
@@ -152,28 +137,21 @@ func _physics_process_watcher(delta):
 #	self.move_and_slide(movement, Vector3.UP)
 	pass
 	
-func _physics_process_fly(delta):
-	# wasd 前后左右 space 上 shift+space 下
-	var movement_vec2 = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-	print("here",movement_vec2)
-# 	print_debug(movement_vec2)
-	var movement = transform.basis.xform(Vector3(movement_vec2.x, 0, movement_vec2.y))*5
-
-	if Input.is_action_pressed("fly_up"):
-		velocity.y += gravity*delta
-	if Input.is_action_pressed("fly_down"):
-		velocity.y -= gravity*delta
-		
-	velocity = self.move_and_slide(Vector3(movement.x,velocity.y, movement.z), Vector3.UP)
-	pass
-
 func _physics_process(delta):
-	self._physics_process_watcher(delta)
+	if Input.is_action_just_pressed("super_mdoe"):
+		self.super_mode=!self.super_mode
+		pass
+	if self.super_mode:
+		self._physics_process_watcher(delta)
+		pass
+	if !self.super_mode:
+		self._physics_process_normal(delta)
+		pass
+
 #	if mode == PlayerMode.FLY:
 #		self._physics_process_fly(delta)
 #		pass
 #	if mode == PlayerMode.NORMAL:
-#		self._physics_process_normal(delta)
 #		pass
 #	pass
 

@@ -26,21 +26,25 @@ static func flat(chunk_position):
 
 #	if chunk_position.y != -100:
 #		return data
-
+	var id=randi() % 29 + 1
 	for x in range(CHUNK_SIZE):
 		for z in range(CHUNK_SIZE):
+			data[Vector3(x, 0, z)] =id 
+
 			#print("x ",x," z ",z)
 			if x==0:
-				data[Vector3(x, 3, z)] = 3
-				data[Vector3(x, 4, z)] = 3
+				#data[Vector3(x, 3, z)] = 3
+			#	data[Vector3(x, 4, z)] = 3
+				pass
 
 			if z==0:
-				data[Vector3(x, 3, z)] = 3
-				data[Vector3(x, 4, z)] = 3
+			#	data[Vector3(x, 3, z)] = 3
+			#	data[Vector3(x, 4, z)] = 3
+				pass
 				
-			data[Vector3(x, 0, z)] = 3
-			data[Vector3(x, 1, z)] = 3
-			data[Vector3(x, 2, z)] = 3
+			#data[Vector3(x, 0, z)] = 3
+			#data[Vector3(x, 1, z)] = 3
+			#data[Vector3(x, 2, z)] = 3
 
 	return data
 
