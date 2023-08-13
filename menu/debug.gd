@@ -13,15 +13,16 @@ func _process(_delta):
 	if Input.is_action_just_pressed("debug"):
 		visible = not visible
 
-	text = "pos: " + _vector_to_string_appropriate_digits(player.transform.origin)
+	text = "origin: " + _vector_to_string_appropriate_digits(player.transform.origin)
+	text += "\nbasis " + _vector_to_string_appropriate_digits(player.transform.basis.get_euler() * (180.0 / PI))
 	text += "\nchunk_pos: " + str(player.chunk_pos())
-	text += "\nEffective render distance: " + str(voxel_world.effective_render_distance)
+	text += "\ndistance: " + str(voxel_world.effective_render_distance)
 	text += "\nLooking: " + _cardinal_string_from_radians(player.transform.basis.get_euler().y)
 	text += "\nMemory: " + "%3.0f" % (OS.get_static_memory_usage() / 1048576.0) + " MiB"
 	text += "\nFPS: " + str(Engine.get_frames_per_second())
 	text += "\nfocus: " + str(self.focusd)
 	text += "\ninput: " + self.input
-	text += "\nplayer_mode: " + str(player.mode)
+	text += "\nplayer_mode: " + str(player.get_mode_str())
 	
 	
 func _input(event:InputEvent):
@@ -56,7 +57,7 @@ func _notification(what) -> void:
 	pass
 		
 func _vector_to_string_appropriate_digits(vector):
-	var ret = "x:{x},y:{y},z:{z}".format( {"x":vector.x,"y":vector.y,"z":vector.z})
+	var ret = "x:{x},y:{y},z:{z}".format( {"x":"%0.6f" % vector.x,"y":"%0.6f" %vector.y,"z":"%0.6f" %vector.z})
 	return ret
 
 # Expects a rotation where 0 is North, on the range -PI to PI.

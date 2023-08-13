@@ -4,25 +4,28 @@ extends StaticBody
 # After that, chunks finish setting themselves up in the _ready() function.
 # If a chunk is changed, its "regenerate" method is called.
 
-const CHUNK_SIZE = 8 # Keep in sync with TerrainGenerator.
-const TEXTURE_SHEET_WIDTH = 8
+const CHUNK_SIZE = 9 # Keep in sync with TerrainGenerator. 一个chunk有n^3个cube组成
+const TEXTURE_SHEET_WIDTH = 8 # 纹理中一个cube的宽度
 
 const CHUNK_LAST_INDEX = CHUNK_SIZE - 1
-const TEXTURE_TILE_SIZE = 1.0 / TEXTURE_SHEET_WIDTH
+const TEXTURE_TILE_SIZE = 1.0 / TEXTURE_SHEET_WIDTH #纹理的1/8
 
+var consts=preload("res://world/const.gd")
 var data = {}
 var chunk_position = Vector3(0,0,0) # TODO: Vector3i
-
+var init_chunk=false
 var _thread
-
 onready var voxel_world = get_parent()
 
+signal chunk_init_ready
 
 func _ready():
 	transform.origin = chunk_position * CHUNK_SIZE
 	name = str(chunk_position)
-	data = TerrainGenerator.flat(chunk_position)
-	#print_debug("ready ",name)
+	var hint=null
+	if init_chunk:
+		hint=consts.LOG
+	data = TerrainGenerator.fill(chunk_position,hint)
 #	if Settings.world_type == 0:
 #		data = TerrainGenerator.random_blocks()
 #	else:
@@ -31,6 +34,10 @@ func _ready():
 	# We can only add colliders in the main thread due to physics limitations.
 	_generate_chunk_collider()
 	_generate_chunk_mesh()
+	if init_chunk:
+		print("signal",chunk_position)
+		emit_signal("chunk_init_ready")
+
 	# However, we can use a thread for mesh generation.
 #	_thread = Thread.new()
 #	_thread.start(self, "_generate_chunk_mesh")
@@ -108,7 +115,7 @@ func _draw_block_mesh(surface_tool, block_sub_position, block_id):
 	elif block_id == 5: # Furnace.
 		top_uvs = calculate_block_uvs(31)
 		bottom_uvs = top_uvs
-	elif block_id == 12: # Log.
+	elif block_id == 12: # Log. 原木
 		top_uvs = calculate_block_uvs(30)
 		bottom_uvs = top_uvs
 	elif block_id == 19: # Bookshelf.
@@ -185,7 +192,7 @@ func _create_block_collider(block_sub_position):
 	var collider = CollisionShape.new()
 	collider.shape = BoxShape.new()
 	collider.shape.extents = Vector3.ONE / 2
-	collider.transform.origin = block_sub_position + Vector3.ONE / 2
+	collider.transform.origin = block_sub_position + Vector3.ONE /2
 	add_child(collider)
 
 

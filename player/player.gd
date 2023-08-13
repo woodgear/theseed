@@ -13,18 +13,25 @@ onready var selected_block_texture = $SelectedBlock
 onready var voxel_world = $"../VoxelWorld"
 onready var crosshair = $"../PauseMenu/Crosshair"
 enum PlayerMode {FLY,NORMAL}
-var mode = PlayerMode.NORMAL setget ,get_mode
-var super_mode = true
-func get_mode() ->String:
+var mode = PlayerMode.NORMAL
+
+func switch_mode():
+	if mode==PlayerMode.FLY:
+		mode=PlayerMode.NORMAL
+	elif mode==PlayerMode.NORMAL:
+		mode=PlayerMode.FLY
+	else:
+		mode=PlayerMode.Fly
+	return
+	
+func get_mode_str() ->String:
 	if mode==PlayerMode.FLY:
 		return "fly"
 	if mode==PlayerMode.NORMAL:
 		return "normal"
 	return "unknow"
-	
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	transform.origin.y=0
 
 func _input(event):
 	
@@ -139,12 +146,13 @@ func _physics_process_watcher(delta):
 	
 func _physics_process(delta):
 	if Input.is_action_just_pressed("super_mdoe"):
-		self.super_mode=!self.super_mode
+		print_debug("switch player mode")
+		switch_mode()
 		pass
-	if self.super_mode:
+	if self.mode==PlayerMode.FLY:
 		self._physics_process_watcher(delta)
 		pass
-	if !self.super_mode:
+	if self.mode==PlayerMode.NORMAL:
 		self._physics_process_normal(delta)
 		pass
 
