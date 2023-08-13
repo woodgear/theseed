@@ -4,7 +4,7 @@ extends Node
 const CHUNK_MIDPOINT = Vector3(0.5, 0.5, 0.5) * Chunk.CHUNK_SIZE
 const CHUNK_END_SIZE = Chunk.CHUNK_SIZE - 1
 
-var effective_render_distance = 5
+var effective_render_distance = 10
 var _old_player_chunk = Vector3() # TODO: Vector3i
 
 var _generating = true

@@ -59,6 +59,10 @@ window/stretch/aspect="expand"
 version_control_autoload_on_startup=true
 version_control_plugin_name="GitAPI"
 
+[global]
+
+import=false
+
 [gui]
 
 theme/use_hidpi=true
@@ -227,7 +231,6 @@ common/physics_fps=120
 
 threads/thread_model=2
 vram_compression/import_etc=true
-vram_compression/import_etc2=false
 quality/filters/anisotropic_filter_level=16
 quality/filters/msaa=2
 environment/default_environment="res://default_env.tres"

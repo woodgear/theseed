@@ -33,7 +33,7 @@ static func flat(chunk_position):
 
 			#print("x ",x," z ",z)
 			if x==0:
-				#data[Vector3(x, 3, z)] = 3
+				data[Vector3(x, 3, z)] = 3
 			#	data[Vector3(x, 4, z)] = 3
 				pass
 
